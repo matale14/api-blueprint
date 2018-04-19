@@ -27,7 +27,27 @@
 			<div class="form">
 		<form action="" method="post">
         {{ form.hidden_tag() }}
-		
+        <p>
+            {{ form.email.label }}<br>
+            {{ form.email(size=32) }}<br>
+            {% for error in form.email.errors %}
+            <span style="color: red;">[{{ error }}]</span>
+            {% endfor %}
+        </p>
+		<p>
+            {{ form.password.label }}<br>
+            {{ form.password(size=32) }}<br>
+            {% for error in form.password.errors %}
+            <span style="color: red;">[{{ error }}]</span>
+            {% endfor %}
+        </p>
+		<p>
+            {{ form.otp.label }}<br>
+            {{ form.otp(size=32) }}<br>
+            {% for error in form.otp.errors %}
+            <span style="color: red;">[{{ error }}]</span>
+            {% endfor %}
+        </p>
         <p>{{ form.delete() }}</p>
 			
 		</div>

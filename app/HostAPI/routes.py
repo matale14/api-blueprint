@@ -44,6 +44,8 @@ def delete():
 					flash("Incorrect information entered.")
 					return render_template('delete.html', title='Delete Account', form=form)
 				else:
+					flash('Account deleted')
+					return redirect(url_for('host.index'))
 	return render_template('delete.html', title='Delete Account', form=form)
 	
 @mod.route('/about')
