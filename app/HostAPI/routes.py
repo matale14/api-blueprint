@@ -27,6 +27,25 @@ def index():
 	"""
 	return render_template('index.html', title='Home')
 	
+	
+@mod.route('/delete')	
+def delete():
+	form = loginForm()
+	if form.validate_on_submit():
+		try:
+			if form.otp.data == "":
+				form.otp.data = " "
+			else:
+				login_data = "deleteuser|{}|{}|{}|".format(form.email.data, form.password.data, form.otp.data)
+				b = login_data.encode()
+				print(b)
+				requested_data = connect(b)
+				if(requested_data == "login|False"):
+					flash("Incorrect information entered.")
+					return render_template('delete.html', title='Delete Account', form=form)
+				else:
+	return render_template('delete.html', title='Delete Account', form=form)
+	
 @mod.route('/about')
 def about():
 	return render_template('about.html', title='About')
@@ -126,7 +145,6 @@ def login():
 					flash("Incorrect information entered.")
 					return render_template('login.html', title='Login', form=form)
 				else:
-					
 					print(requested_data)
 					datajoin = "".join(map(str, requested_data))
 					data_list = datajoin.split("|")

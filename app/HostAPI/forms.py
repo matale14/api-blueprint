@@ -150,3 +150,4 @@ class LoginForm(FlaskForm):
 	otp = StringField('One time password (Leave blank if you do not have it activated)')
 	password = PasswordField('Password', [Required(), check_password])
 	submit = SubmitField('Login')
+	delete = SubmitField('Delete')
