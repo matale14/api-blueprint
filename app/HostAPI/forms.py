@@ -135,7 +135,7 @@ class RegForm(FlaskForm):
 
 	
 class RegisterForm(FlaskForm):
-    contactperson = StringField('Contact Person', [Required()])
+    contactperson = StringField('Representative', [Required()])
     webname = StringField('Company Name', [Required()])
     email = StringField('Email', [Required(), check_email])
     country = SelectField('Country', [Required(), check_country], choices = countrySelect)

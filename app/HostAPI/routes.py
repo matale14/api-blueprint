@@ -71,8 +71,11 @@ def register():
 				o = setup_otp.encode()
 				print(o)
 				otp = connect(o)
-				print(otp)
-				flash(otp)
+				datajoin = "".join(map(str, otp))
+				data_list = datajoin.split("|")
+				data = data_list[3]
+				print(data)
+				flash(data)
 				return redirect(url_for('host.reg_com'))
 		except Exception as e:
 			print("debug: ", e)
