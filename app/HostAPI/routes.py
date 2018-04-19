@@ -253,6 +253,11 @@ def ex_login():
 				pass
 	return render_template('ex_login.html', title='Login', form=form)
 		
+@mod.route("/api")
+def api():		
+	return render_template('api.html', title='API')
+		
+		
 @mod.route('/logout')
 def logout():
 	session['logged_in'] = False
