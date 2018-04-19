@@ -1,0 +1,4 @@
+cd into this directory (cd desktop\api)
+venv\Scripts\activate
+set FLASK_APP=run.py
+flask run

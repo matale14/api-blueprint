@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+<title>SHOP</title>
+<body>
+<div>
+<a href="/store/onlineid"><button>REFRESH</button></a>
+</div>
+<div>
+{% with messages = get_flashed_messages() %}
+  {% if messages %}
+    <ul class=flashes>
+    {% for message in messages %}
+      <li>{{ message }}</li>
+    {% endfor %}
+    </ul>
+  {% endif %}
+{% endwith %}
+</div>
+</body>
+</html>
+
