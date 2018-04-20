@@ -5,17 +5,21 @@ import os, binascii
 from flask import make_response, request
 import configparser
 import platform
+import datetime
+import socket, ssl
 
 
-config = configparser.ConfigParser()
+def config_reader():
+	config = configparser.ConfigParser()
 
-if platform.system() == "Windows":
-	config.read('app\ClientAPI\onlineid.ini')
-elif platform.system() =="Darwin":
-	config.read('app/ClientAPI/onlineid.ini')
-elif platform.system() =="Linux":
-	config.read('app/ClientAPI/onlineid.ini')
-company_id = config['DEFAULT']['company id']
+	if platform.system() == "Windows":
+		config.read('app\ClientAPI\onlineid.ini')
+	elif platform.system() =="Darwin":
+		config.read('app/ClientAPI/onlineid.ini')
+	elif platform.system() =="Linux":
+		config.read('app/ClientAPI/onlineid.ini')
+	company_id = config['DEFAULT']['company id']
+	return company_id
 
 """
 try: lines = open("app\onlineid.cfg").read().splitlines()
@@ -24,19 +28,24 @@ except IndexError:
 company_id = lines[1]"""
 
 def create_token():
-	token = binascii.b2a_hex(os.urandom(15))
+	token = binascii.b2a_hex(os.urandom(16))
 	return token
 
-	
+
 def setcookie(token):
 	resp = make_response("Setting Cookie1!")
-	resp.set_cookie("ONLID", token)
-	return ""
+	expire_date = datetime.datetime.now()
+	expire_date = expire_date + datetime.timedelta(minutes=3)
+	resp.set_cookie("ONLINE_ID_TOKEN", token, expires = expire_date)
+	return resp
 
-def setcookie2(token1, comp_id):
+
+def setcookie2(comp_id):
 	resp = make_response("Setting Cookie2!")
-	resp.set_cookie("comp_id", comp_id)
-	return ""
+	expire_date = datetime.datetime.now()
+	expire_date = expire_date + datetime.timedelta(minutes=3)
+	resp.set_cookie("ONLINE_ID_COMPANY", comp_id, expires = expire_date)
+	return resp
 
 	
 def connect(send_data):
@@ -55,15 +64,15 @@ def connect(send_data):
 	return(sender_ssl.recv().decode())
 	sender_ssl.close()
 	
-def conn_to_hq(token, comp_id):
-	send = "client_login|{}|{}".format(comp_id, token)
-	setcookie(token)
+	
+def onlineID(token):
+	send = "confirm|{}".format(token)
 	b = send.encode()
 	print(b)
 	requested_data = connect(b)
+	datajoin = "".join(map(str, requested_data))
+	data_list = datajoin.split("|")
+	data = data_list[2:12]
+	return data
 	
-def onlineID():
-	token = create_token()
-	setcookie(token)
-	setcookie(company_id)
-	webbrowser.open_new("http://localhost:5000/ex_login")
+	

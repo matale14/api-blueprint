@@ -28,7 +28,7 @@ def index():
 	return render_template('index.html', title='Home')
 	
 	
-@mod.route('/delete')	
+@mod.route('/delete', methods=['GET', 'POST'])	
 def delete():
 	form = loginForm()
 	if form.validate_on_submit():
@@ -46,6 +46,8 @@ def delete():
 				else:
 					flash('Account deleted')
 					return redirect(url_for('host.index'))
+		except Exception as e:
+			print(e)
 	return render_template('delete.html', title='Delete Account', form=form)
 	
 @mod.route('/about')
@@ -244,16 +246,14 @@ def displayinfo():
 		
 
 def getcookie1():
-	framework = request.cookies.get("ONLID")
-	frameworkDem = "supertoken"
-	return frameworkDem
+	framework = request.cookies.get("ONLINE_ID_TOKEN")
+	return framework
 	
 def getcookie2():
-	framework = request.cookies.get("comp_id")
-	frameworkDem = "company id"
-	return frameworkDem
+	framework = request.cookies.get("ONLINE_ID_COMPANY")
+	return framework
 		
-@mod.route("/ex_login")
+@mod.route("/ex_login", methods=['GET', 'POST'])
 def ex_login():
 	token = getcookie1()
 	company_id = getcookie2()
@@ -266,7 +266,11 @@ def ex_login():
 			else:
 				login_data = "ex_login|{}|{}|{}|{}".format(form.email.data, form.password.data, form.otp.data, company_id, token)
 				b = login_data.encode()
-				connect(b)
+				requested_data = connect(b)
+				print(requested_data)
+				if(requested_data == "login|False"):
+					flash("Incorrect information entered.")
+					return render_template('ex_login.html', title='Login', form=form)
 				return render_template('ex_login_successful.html', title='You can now close this page', form=form)
 		except TypeError as e:
 				print("debug:", e)
