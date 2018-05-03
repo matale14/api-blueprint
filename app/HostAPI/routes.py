@@ -4,7 +4,6 @@ import time
 from app import app
 from app.HostAPI.forms import LoginForm, RegForm, RegisterForm
 from flask import render_template, flash, redirect, url_for, session, request, abort, url_for, session, Blueprint
-from flask_login import LoginManager, login_required, login_user, logout_user, UserMixin, current_user
 import socket, ssl
 import pymysql
 import bcrypt
@@ -155,18 +154,8 @@ def login():
 					data = data_list[2:12]
 					#for f in data:
 					#	flash(f)
-					firstname, lastname, phone, zip, country, countrycode, address, addressnum, birth, sex = data				
+					session['firstname'], session['lastname'], session['phone'], session['zip'], session['country'], session['countrycode'], session['address'], session['addressnum'], session['birth'], session['sex'] = data				
 					session['logged_in'] = True
-					session['firstname'] = firstname
-					session['lastname'] = lastname
-					session['phone'] = phone
-					session['zip'] = zip
-					session['country'] = country
-					session['countrycode'] = countrycode
-					session['address'] = address
-					session['addressnum'] = addressnum
-					session['birth'] = birth
-					session['sex'] = sex
 					session['email'] = form.email.data
 					return redirect(url_for('host.displayinfo'))
 	
@@ -244,19 +233,43 @@ def displayinfo():
 		
 	return render_template('displayinfo.html', title='Edit Information', form=form)
 		
-
-def getcookie1():
-	framework = request.cookies.get("ONLINE_ID_TOKEN")
-	return framework
-	
-def getcookie2():
-	framework = request.cookies.get("ONLINE_ID_COMPANY")
-	return framework
 		
 @mod.route("/ex_login", methods=['GET', 'POST'])
 def ex_login():
-	token = getcookie1()
-	company_id = getcookie2()
+	tokens = request.args.get("tokens")
+	token_list = tokens.split("|")
+	token = token_list[0]
+	company_id = token_list[1]
+	form = LoginForm()
+	if form.validate_on_submit():
+		try:
+			if form.otp.data == "":
+				form.otp.data = " "
+			else:
+				login_data = "ex_login|{}|{}|{}|{}".format(form.email.data, form.password.data, form.otp.data, company_id, token)
+				b = login_data.encode()
+				print(login_data)
+				requested_data = connect(b)
+				print(requested_data)
+				if(requested_data == "login|False"):
+					flash("Incorrect information entered.")
+					print("Incorrect information entered.")
+					return render_template('ex_login.html', title='Login', form=form)
+				return render_template('ex_login_successful.html', title='You can now close this page', form=form)
+		except Exception as e:
+				print("debug:", e)
+				pass
+	else:
+		print("something went wrong, with validate_on_submit")
+	return render_template('ex_login.html', title='Login', form=form)
+	
+"""
+	
+@mod.route("/ex_login", methods=['GET', 'POST'])
+def ex_login():
+	token = request.cookies.get("ONLINE_ID_TOKEN")
+	company_id = request.cookies.get("ONLINE_ID_COMPANY")
+	print("ex login: ")
 	print(token, company_id)
 	form = LoginForm()
 	if form.validate_on_submit():
@@ -276,11 +289,11 @@ def ex_login():
 				print("debug:", e)
 				pass
 	return render_template('ex_login.html', title='Login', form=form)
+"""	
 		
 @mod.route("/api")
 def api():		
 	return render_template('api.html', title='API')
-		
 		
 @mod.route('/logout')
 def logout():

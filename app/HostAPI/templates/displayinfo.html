@@ -27,6 +27,7 @@
 			<div class="form">
 		<form action="" method="post">
         {{ form.hidden_tag() }}
+		{{ form.csrf_token }}
         <p>
             {{ form.firstname.label }}<br>
             {{ form.firstname(size=32, value=session['firstname']) }}<br>
