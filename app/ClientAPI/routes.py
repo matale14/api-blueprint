@@ -19,4 +19,5 @@ def onlineid_setup():
 @mod.route('/onlineid_request')
 def onlineid_request():
 	data = onlineID()
+	print(data)
 	return render_template('store/onlineid.html')
