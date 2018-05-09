@@ -196,7 +196,7 @@ def displayinfo():
 					s = "countrycode|" + form.countrycode.data + "|"
 					changes.append(s)
 				if form.address.data != session['address']:
-					s = "address|" + form.address.data + "|"
+					s = "adress|" + form.address.data + "|"
 					changes.append(s)
 				if form.addressnumber.data != session['addressnum']:
 					s = "addressnumber|" + form.addressnumber.data + "|"
@@ -236,6 +236,9 @@ def displayinfo():
 		
 @mod.route("/ex_login", methods=['GET', 'POST'])
 def ex_login():
+	"""
+	This is the page customers get redirected to when logging on from the store.
+	"""
 	tokens = request.args.get("tokens")
 	token_list = tokens.split("|")
 	token = token_list[0]
@@ -263,33 +266,6 @@ def ex_login():
 		print("something went wrong, with validate_on_submit")
 	return render_template('ex_login.html', title='Login', form=form)
 	
-"""
-	
-@mod.route("/ex_login", methods=['GET', 'POST'])
-def ex_login():
-	token = request.cookies.get("ONLINE_ID_TOKEN")
-	company_id = request.cookies.get("ONLINE_ID_COMPANY")
-	print("ex login: ")
-	print(token, company_id)
-	form = LoginForm()
-	if form.validate_on_submit():
-		try:
-			if form.otp.data == "":
-				form.otp.data = " "
-			else:
-				login_data = "ex_login|{}|{}|{}|{}".format(form.email.data, form.password.data, form.otp.data, company_id, token)
-				b = login_data.encode()
-				requested_data = connect(b)
-				print(requested_data)
-				if(requested_data == "login|False"):
-					flash("Incorrect information entered.")
-					return render_template('ex_login.html', title='Login', form=form)
-				return render_template('ex_login_successful.html', title='You can now close this page', form=form)
-		except TypeError as e:
-				print("debug:", e)
-				pass
-	return render_template('ex_login.html', title='Login', form=form)
-"""	
 		
 @mod.route("/api")
 def api():		
